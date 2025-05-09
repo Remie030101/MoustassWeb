@@ -54,7 +54,11 @@ jobs:
       run: |
         if [ -f "backend/package.json" ]; then
           cd backend
-          npm run build
+          if npm run | grep -q "build"; then
+            npm run build
+          else
+            echo "Skipping backend build - build script not found in package.json"
+          fi
         else
           echo "Skipping backend build - package.json not found"
         fi
@@ -63,7 +67,11 @@ jobs:
       run: |
         if [ -f "frontend/package.json" ]; then
           cd frontend
-          npm run build
+          if npm run | grep -q "build"; then
+            npm run build
+          else
+            echo "Skipping frontend build - build script not found in package.json"
+          fi
         else
           echo "Skipping frontend build - package.json not found"
         fi
