@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moustass Web</title>
+    <link rel="stylesheet" href="assets/css/normalize.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="icon" type="image/png" href="assets/images/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Le contenu sera chargé dynamiquement -->
+        <div id="loading" class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Chargement de l'application...</p>
+        </div>
+    </div>
+
+    <!-- Template pour la page de connexion -->
+    <template id="login-template">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1>Moustass Web</h1>
+                <img src="assets/images/logo.png" alt="Logo Moustass Web" class="auth-logo">
+            </div>
+            <div class="auth-form">
+                <h2>Connexion</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="username">Nom d'utilisateur</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Mot de passe</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-type">Type de connexion</label>
+                        <select id="login-type" name="login-type">
+                            <option value="user">Utilisateur</option>
+                            <option value="admin">Administrateur</option>
+                        </select>
+                    </div>
+                    <div class="form-error" id="login-error"></div>
+                    <button type="submit" class="btn btn-primary">Se connecter</button>
+                </form>
+                <div class="auth-links">
+                    <a href="#" id="forgot-password-link">Mot de passe oublié ?</a>
+                    <a href="#" id="register-link">Créer un compte</a>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Template pour le formulaire de mot de passe oublié -->
+    <template id="forgot-password-template">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1>Moustass Web</h1>
+                <img src="assets/images/logo.png" alt="Logo Moustass Web" class="auth-logo">
+            </div>
+            <div class="auth-form">
+                <h2>Mot de passe oublié</h2>
+                <form id="forgot-password-form">
+                    <div class="form-group">
+                        <label for="forgot-email">Email</label>
+                        <input type="email" id="forgot-email" name="email" required>
+                    </div>
+                    <div class="form-error" id="forgot-password-error"></div>
+                    <button type="submit" class="btn btn-primary">Réinitialiser le mot de passe</button>
+                </form>
+                <div class="auth-links">
+                    <a href="#" id="back-to-login">Retour à la connexion</a>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Template pour la page d'inscription -->
+    <template id="register-template">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1>Moustass Web</h1>
+                <img src="assets/images/logo.png" alt="Logo Moustass Web" class="auth-logo">
+            </div>
+            <div class="auth-form">
+                <h2>Inscription</h2>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="reg-username">Nom d'utilisateur</label>
+                        <input type="text" id="reg-username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-email">Email</label>
+                        <input type="email" id="reg-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-fullname">Nom complet</label>
+                        <input type="text" id="reg-fullname" name="full_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">Mot de passe</label>
+                        <input type="password" id="reg-password" name="password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-confirm-password">Confirmer le mot de passe</label>
+                        <input type="password" id="reg-confirm-password" name="confirm_password" required>
+                    </div>
+                    <div class="form-error" id="register-error"></div>
+                    <button type="submit" class="btn btn-primary">S'inscrire</button>
+                </form>
+                <div class="auth-links">
+                    <a href="#" id="login-link">Déjà un compte? Se connecter</a>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Template pour le tableau de bord -->
+    <template id="dashboard-template">
+        <div class="dashboard-container">
+            <header class="dashboard-header">
+                <div class="header-logo">
+                    <img src="assets/images/logo.png" alt="Logo Moustass Web" class="logo-small">
+                    <h1>Moustass Web</h1>
+                </div>
+                <div class="header-user">
+                    <span id="user-fullname"></span>
+                    <button id="logout-btn" class="btn btn-small">Déconnexion</button>
+                </div>
+            </header>
+            <div class="dashboard-content">
+                <nav class="sidebar">
+                    <ul class="menu">
+                        <li class="menu-item active" data-page="audio">
+                            <i class="icon icon-microphone"></i>
+                            <span>Enregistrements Audio</span>
+                        </li>
+                        <li class="menu-item" data-page="financial">
+                            <i class="icon icon-chart"></i>
+                            <span>Données Financières</span>
+                        </li>
+                        <li class="menu-item" data-page="profile">
+                            <i class="icon icon-user"></i>
+                            <span>Mon Profil</span>
+                        </li>
+                    </ul>
+                </nav>
+                <main class="main-content">
+                    <div id="page-content">
+                        <!-- Contenu dynamique des pages -->
+                    </div>
+                </main>
+            </div>
+        </div>
+    </template>
+
+    <!-- Template pour la page audio -->
+    <template id="audio-page-template">
+        <div class="page-header">
+            <h2>Enregistrements Audio</h2>
+            <button id="new-audio-btn" class="btn btn-primary">Nouvel Enregistrement</button>
+        </div>
+        <div class="audio-recorder" id="audio-recorder" style="display: none;">
+            <h3>Nouvel enregistrement</h3>
+            <div class="recorder-controls">
+                <button id="start-recording" class="btn btn-circle">
+                    <i class="icon icon-microphone"></i>
+                </button>
+                <button id="stop-recording" class="btn btn-circle btn-danger" disabled>
+                    <i class="icon icon-stop"></i>
+                </button>
+                <div class="recording-status">
+                    <span id="recording-time">00:00</span>
+                    <div id="recording-indicator"></div>
+                </div>
+            </div>
+            <div class="recorder-save" id="recorder-save" style="display: none;">
+                <div class="form-group">
+                    <label for="recording-name">Nom de l'enregistrement</label>
+                    <input type="text" id="recording-name" name="recording-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="recording-description">Description (optionnel)</label>
+                    <textarea id="recording-description" name="recording-description"></textarea>
+                </div>
+                <div class="recorder-buttons">
+                    <button id="save-recording" class="btn btn-primary">Sauvegarder</button>
+                    <button id="cancel-recording" class="btn btn-secondary">Annuler</button>
+                </div>
+            </div>
+        </div>
+        <div class="audio-list-container">
+            <div class="list-filter">
+                <input type="text" id="audio-search" placeholder="Rechercher...">
+            </div>
+            <div class="audio-list" id="audio-list">
+                <div class="loading-spinner"></div>
+            </div>
+            <div class="list-pagination" id="audio-pagination">
+                <!-- Pagination dynamique -->
+            </div>
+        </div>
+    </template>
+
+    <!-- Template pour la page des données financières -->
+    <template id="financial-page-template">
+        <div class="page-header">
+            <h2>Données Financières</h2>
+            <button id="new-data-btn" class="btn btn-primary">Nouvelles Données</button>
+        </div>
+        <div class="financial-form" id="financial-form" style="display: none;">
+            <h3>Ajouter des données financières</h3>
+            <form id="data-form">
+                <div class="form-group">
+                    <label for="data-type">Type de données</label>
+                    <select id="data-type" name="data-type" required>
+                        <option value="">Sélectionnez un type</option>
+                        <option value="investment">Investissement</option>
+                        <option value="revenue">Revenus</option>
+                        <option value="expense">Dépenses</option>
+                        <option value="projection">Projections</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="data-content">Contenu</label>
+                    <textarea id="data-content" name="data-content" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="data-notes">Notes (optionnel)</label>
+                    <textarea id="data-notes" name="data-notes"></textarea>
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                    <button type="button" id="cancel-data" class="btn btn-secondary">Annuler</button>
+                </div>
+            </form>
+        </div>
+        <div class="financial-list-container">
+            <div class="list-filter">
+                <select id="filter-type">
+                    <option value="">Tous les types</option>
+                    <option value="investment">Investissement</option>
+                    <option value="revenue">Revenus</option>
+                    <option value="expense">Dépenses</option>
+                    <option value="projection">Projections</option>
+                </select>
+                <input type="text" id="financial-search" placeholder="Rechercher...">
+            </div>
+            <div class="financial-list" id="financial-list">
+                <div class="loading-spinner"></div>
+            </div>
+            <div class="list-pagination" id="financial-pagination">
+                <!-- Pagination dynamique -->
+            </div>
+        </div>
+    </template>
+
+    <!-- Template pour la page de profil -->
+    <template id="profile-page-template">
+        <div class="page-header">
+            <h2>Mon Profil</h2>
+        </div>
+        <div class="profile-container">
+            <div class="profile-section">
+                <h3>Informations personnelles</h3>
+                <form id="profile-form">
+                    <div class="form-group">
+                        <label for="profile-username">Nom d'utilisateur</label>
+                        <input type="text" id="profile-username" name="username" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-email">Email</label>
+                        <input type="email" id="profile-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-fullname">Nom complet</label>
+                        <input type="text" id="profile-fullname" name="full_name" required>
+                    </div>
+                    <div class="form-error" id="profile-error"></div>
+                    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                </form>
+            </div>
+            <div class="profile-section">
+                <h3>Changer le mot de passe</h3>
+                <form id="password-form">
+                    <div class="form-group">
+                        <label for="current-password">Mot de passe actuel</label>
+                        <input type="password" id="current-password" name="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">Nouveau mot de passe</label>
+                        <input type="password" id="new-password" name="newPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-new-password">Confirmer le nouveau mot de passe</label>
+                        <input type="password" id="confirm-new-password" name="confirmNewPassword" required>
+                    </div>
+                    <div class="form-error" id="password-error"></div>
+                    <button type="submit" class="btn btn-primary">Changer le mot de passe</button>
+                </form>
+            </div>
+        </div>
+    </template>
+
+    <!-- Template pour le tableau de bord administrateur -->
+    <template id="admin-dashboard-template">
+        <div class="admin-dashboard">
+            <header class="admin-header">
+                <div class="header-logo">
+                    <img src="assets/images/logo.png" alt="Logo Moustass Web" class="logo-small">
+                    <h1>Moustass Web - Administration</h1>
+                </div>
+                <div class="user-info">
+                    <span id="admin-fullname"></span>
+                    <button id="admin-logout-btn" class="btn btn-secondary">Déconnexion</button>
+                </div>
+            </header>
+            <div class="admin-section">
+                <div class="section-header">
+                    <h2>Gestion des utilisateurs</h2>
+                    <button id="new-user-btn" class="btn btn-primary">Nouvel utilisateur</button>
+                </div>
+                
+                <!-- Formulaire d'ajout/modification d'utilisateur -->
+                <div id="user-form-container" class="form-container" style="display: none;">
+                    <form id="user-form">
+                        <input type="hidden" id="user-id">
+                        <div class="form-group">
+                            <label for="user-username">Nom d'utilisateur</label>
+                            <input type="text" id="user-username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-email">Email</label>
+                            <input type="email" id="user-email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-fullname">Nom complet</label>
+                            <input type="text" id="user-fullname" name="full_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-role">Rôle</label>
+                            <select id="user-role" name="role" required>
+                                <option value="user">Utilisateur</option>
+                                <option value="admin">Administrateur</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="user-password">Mot de passe</label>
+                            <input type="password" id="user-password" name="password">
+                            <small>Laissez vide pour ne pas modifier le mot de passe</small>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            <button type="button" id="cancel-user-form" class="btn btn-secondary">Annuler</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Liste des utilisateurs -->
+                <div class="users-list-container">
+                    <div class="list-filter">
+                        <input type="text" id="user-search" placeholder="Rechercher un utilisateur...">
+                        <select id="role-filter">
+                            <option value="">Tous les rôles</option>
+                            <option value="user">Utilisateur</option>
+                            <option value="admin">Administrateur</option>
+                        </select>
+                    </div>
+                    <div class="users-list" id="users-list">
+                        <!-- La liste des utilisateurs sera chargée dynamiquement -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Template pour un élément de la liste des utilisateurs -->
+    <template id="user-item-template">
+        <div class="user-item" data-id="">
+            <div class="user-info">
+                <h4 class="user-name"></h4>
+                <p class="user-email"></p>
+                <span class="user-role"></span>
+            </div>
+            <div class="user-actions">
+                <button class="btn btn-icon user-edit" title="Modifier">
+                    <i class="icon icon-edit"></i>
+                </button>
+                <button class="btn btn-icon user-delete" title="Supprimer">
+                    <i class="icon icon-trash"></i>
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <!-- Modèles pour les items de liste -->
+    <template id="audio-item-template">
+        <div class="audio-item" data-id="">
+            <div class="audio-info">
+                <h4 class="audio-title"></h4>
+                <p class="audio-description"></p>
+                <p class="audio-date"></p>
+                <span class="audio-duration"></span>
+            </div>
+            <div class="audio-actions">
+                <button class="btn btn-icon audio-play">
+                    <i class="icon icon-play"></i>
+                </button>
+                <button class="btn btn-icon audio-edit">
+                    <i class="icon icon-edit"></i>
+                </button>
+                <button class="btn btn-icon audio-delete">
+                    <i class="icon icon-trash"></i>
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <template id="financial-item-template">
+        <div class="financial-item" data-id="">
+            <div class="financial-info">
+                <h4 class="financial-type"></h4>
+                <p class="financial-notes"></p>
+                <p class="financial-date"></p>
+            </div>
+            <div class="financial-actions">
+                <button class="btn btn-icon financial-view">
+                    <i class="icon icon-eye"></i>
+                </button>
+                <button class="btn btn-icon financial-edit">
+                    <i class="icon icon-edit"></i>
+                </button>
+                <button class="btn btn-icon financial-delete">
+                    <i class="icon icon-trash"></i>
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <!-- Modales -->
+    <div id="modal-container" class="modal-container" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title"></h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-content"></div>
+        </div>
+    </div>
+
+    <!-- Template pour la page d'administration -->
+    <template id="admin-page-template">
+        <div class="admin-dashboard">
+            <header class="admin-header">
+                <h1>Administration</h1>
+                <div class="user-info">
+                    <span id="admin-fullname"></span>
+                    <button id="admin-logout-btn" class="btn btn-small">Déconnexion</button>
+                </div>
+            </header>
+            <div class="admin-content">
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>Gestion des utilisateurs</h2>
+                        <button id="new-user-btn" class="btn btn-primary">Nouvel utilisateur</button>
+                    </div>
+                    <div class="users-list-container">
+                        <div class="list-filter">
+                            <input type="text" id="user-search" placeholder="Rechercher un utilisateur...">
+                            <select id="role-filter">
+                                <option value="">Tous les rôles</option>
+                                <option value="user">Utilisateur</option>
+                                <option value="admin">Administrateur</option>
+                            </select>
+                        </div>
+                        <div id="users-list" class="users-list">
+                            <!-- Liste des utilisateurs -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Scripts -->
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/audio.js"></script>
+    <script src="assets/js/financial.js"></script>
+    <script src="assets/js/profile.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
