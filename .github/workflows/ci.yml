@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Simple CI/CD
 
 on:
   push:
@@ -7,132 +7,44 @@ on:
     branches: [ master ]
 
 jobs:
-  test-backend:
+  build-and-test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
 
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Set up Node.js
+
+    - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '18'
         cache: 'npm'
-        cache-dependency-path: 'backend/package-lock.json'
-    
-    - name: Install dependencies
+
+    - name: Install and Test Backend
       run: |
         cd backend
         npm ci
-    
-    - name: Run tests
-      run: |
-        cd backend
         npm test
-      env:
-        NODE_ENV: test
 
-  test-frontend:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
-
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: 'frontend/package-lock.json'
-    
-    - name: Install dependencies
+    - name: Install and Test Frontend
       run: |
         cd frontend
         npm ci
-    
-    - name: Run tests
-      run: |
-        cd frontend
         npm test
-      env:
-        NODE_ENV: test
-
-  build:
-    needs: [test-backend, test-frontend]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-
-    steps:
-    - uses: actions/checkout@v3
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: |
-          backend/package-lock.json
-          frontend/package-lock.json
 
     - name: Build Backend
       run: |
         cd backend
-        npm ci
         npm run build
 
     - name: Build Frontend
       run: |
         cd frontend
-        npm ci
         npm run build
 
-    - name: Upload Backend Build
-      uses: actions/upload-artifact@v3
-      with:
-        name: backend-build
-        path: ./backend/dist
-
-    - name: Upload Frontend Build
-      uses: actions/upload-artifact@v3
-      with:
-        name: frontend-build
-        path: ./frontend/build
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-
-    steps:
-    - name: Download Backend Build
-      uses: actions/download-artifact@v3
-      with:
-        name: backend-build
-        path: ./backend/dist
-
-    - name: Download Frontend Build
-      uses: actions/download-artifact@v3
-      with:
-        name: frontend-build
-        path: ./frontend/build
-
-    # Ajoutez ici les étapes de déploiement spécifiques à votre environnement
-    # Par exemple, déploiement sur Vercel, Heroku, AWS, etc.
-    - name: Deploy Backend
+    - name: Deploy
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       run: |
-        echo "Add your backend deployment steps here"
-        # Exemple pour Heroku:
-        # heroku container:push web -a your-app-name
-        # heroku container:release web -a your-app-name
-
-    - name: Deploy Frontend
-      run: |
-        echo "Add your frontend deployment steps here"
-        # Exemple pour Vercel:
-        # npx vercel --prod 
+        echo "Add your deployment commands here"
+        # Example:
+        # - For Vercel: npx vercel --prod
+        # - For Heroku: heroku container:push web -a your-app-name 
