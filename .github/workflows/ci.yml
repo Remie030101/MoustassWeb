@@ -24,21 +24,35 @@ jobs:
       with:
         path: |
           **/node_modules
-        key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+        key: ${{ runner.os }}-modules-${{ hashFiles('**/package.json') }}
         restore-keys: |
           ${{ runner.os }}-modules-
+
+    - name: Check Backend Setup
+      run: |
+        if [ ! -f "backend/package.json" ]; then
+          echo "Error: backend/package.json not found"
+          exit 1
+        fi
 
     - name: Install and Check Backend
       run: |
         cd backend
-        npm ci
+        npm install
         npm test -- --passWithNoTests || true
         npm run lint || true
+
+    - name: Check Frontend Setup
+      run: |
+        if [ ! -f "frontend/package.json" ]; then
+          echo "Error: frontend/package.json not found"
+          exit 1
+        fi
 
     - name: Install and Check Frontend
       run: |
         cd frontend
-        npm ci
+        npm install
         npm test -- --passWithNoTests || true
         npm run lint || true
 
