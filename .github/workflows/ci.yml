@@ -1,4 +1,4 @@
-name: Simple CI/CD
+name: CI/CD
 
 on:
   push:
@@ -17,7 +17,16 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18'
-        cache: 'npm'
+
+    - name: Cache node modules
+      uses: actions/cache@v3
+      id: npm-cache
+      with:
+        path: |
+          **/node_modules
+        key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-modules-
 
     - name: Install and Test Backend
       run: |
